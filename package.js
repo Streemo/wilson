@@ -1,6 +1,6 @@
 Package.describe({
   name: 'streemo:wilson',
-  version: '0.0.1',
+  version: '0.0.2',
   summary: 'The Wilson algorithm. Score/rank posts, detect spam, make decisions, etc.',
   git: 'https://github.com/Streemo/wilson.git',
   documentation: 'README.md'
