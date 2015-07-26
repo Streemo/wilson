@@ -10,13 +10,13 @@ Research about determining mTurk worker quality: http://ilpubs.stanford.edu:8090
 
 ### Problem:
 
-**5/5 votes ranks higher than 199/200 (if you simply compare the ratio).**
+*5/5 votes ranks higher than 199/200 (if you simply compare the ratio).*
 
 One vote is meaningless from a statistical standpoint (if your system allows votes from many).
 
 ### Solution:
 
-**The Wilson Confidence Interval.**
+*The Wilson Confidence Interval.*
 
 Input the number of upvotes & totalvotes and it will return an interval between a low guess and a high guess of what the likely score is, taking into account the amount of votes.
 
@@ -42,7 +42,7 @@ Create a new `Wilson`. Cache shared between instances, since the particular Macl
 
 #### `wilsonInstance.score(positives, total, optionalCallback(WCI, rawRatio))`
 
-You can think of the raw ratio, upVotes/totalVotes, as a score between (0,1) But this isn't acceptable, as seen above. Without a callback, `.score(positives, total)` returns an interval of numbers, both between (0,1) which you can use to get a better effective score/rank.
+You can think of the raw ratio, upVotes/totalVotes, as a score between (0,1) But this isn't acceptable, as seen above. Without a callback, `.score(positives, total)` returns the WCI which you can use to get a better effective score/rank.
 ```
 var myPost = getFromMongo('postId');
 var postRanker = new Wilson(.9);
