@@ -53,8 +53,12 @@ The callback is passed this interval (the WCI) and the raw ratio so you can do y
 ```
 var spamDetector = new Wilson(.95);
 var postIsSpam = spamDetector.score(myPost.markedSpamNumber, myPost.totalViews, function(wci, rawRatio){
-  var length = wci[1] - wci[0]
-  var isSpam = !! ourSuperSecretAlgorithmThatDoesntExistYet(length, rawRatio)
+  var WCILength = wci[1] - wci[0]
+  var acceptableSpamRatio = .2
+  var isSpam = false;
+  if (WCILength < .05){
+  	isSpam = rawRatio > acceptableSpamRatio
+  }
   return isSpam;
 })
 myPost.markSpam(postIsSpam) // update the DB
