@@ -1,43 +1,44 @@
-# Problem:
+# Wilson Confidence Interval, for Meteor.
 
-#### 5/5 votes ranks higher than 199/200 (if you simply compare the ratio).
+*WCI is used for decision making and scoring. It works well for many uses (e.g. Scoring Posts, determining if something is spam, or any other kind of binary categorization).*
 
-#### Enter The Wilson Confidence Interval.
+Reddit scoring: http://amix.dk/blog/post/19588
 
-Input the number of upvotes & totalvotes and it will return an interval between a low guess and a high guess of what the likely score is. It takes into account statistical significance. 
+Scoring properly: http://www.evanmiller.org/how-not-to-sort-by-average-rating.html
 
-*WCI is used for decision making and scoring. Think of it as a decent placeholder for your company's not-yet-thought-of super-secret algorithm. It works well for many uses (e.g. Scoring Posts, determining if something is spam, or any other kind of binary categorization).*
+Research about determining mTurk worker quality: http://ilpubs.stanford.edu:8090/1093/1/fp0194-joglekar.pdf
 
-Here are some interesting posts which go into more detail.
+### Problem:
 
-http://amix.dk/blog/post/19588
+**5/5 votes ranks higher than 199/200 (if you simply compare the ratio).**
 
-http://www.evanmiller.org/how-not-to-sort-by-average-rating.html
+One vote is meaningless from a statistical standpoint (if your system allows votes from many).
 
-This is a paper which talks about using the WCI to determine mTurk worker error rates to figure out when to give workers the boot, which is eerily reminiscent of detecting spam.
+### Solution:
 
-http://ilpubs.stanford.edu:8090/1093/1/fp0194-joglekar.pdf
+**The Wilson Confidence Interval.**
+
+Input the number of upvotes & totalvotes and it will return an interval between a low guess and a high guess of what the likely score is, taking into account the amount of votes.
+
+
 
 # This Package:
 
-This is a minimal package that only contains the WCI and its own _internal methods to compute Z, on which WCI depends. Avoided bringing in collosal math libraries by only implementing what is required by the WCI. Z is computed by summing terms of the appropriate Maclaurin series; but this is only ever done **one** time on the very first call (makes use of memoization, so it's super fast). Didn't want to bring in some arbitrary table of Z values in case you really need some precise value. The Wilson algorithm itself is inexpensive. That's all that's provided. Using the interval effectively is up to you.
+A minimal package that computes (with memoization) what is needed for the WCI from scratch (no collosal mathematics libraries needed). The Wilson algorithm itself is inexpensive. That's all that's provided. Using the interval effectively is up to you.
 
-##### This package makes it easy for you to build your own algorithms on top of the WCI - but you don't have to. You could just `Wilson.lazyScore` for a temporary (and actually pretty good) scoring mechanism.
+**This package makes it easy for you to build your own algorithms on top of the WCI - but you don't have to. You could just `Wilson.lazyScore` for a temporary (and actually pretty good) scoring mechanism.**
 
 ---
 
 ## Full API
 
-The global object has a lazy score method if your scoring usage is very simple. You don't need to instantiate `Wilson` objects, just use the global method.
-
 #### `Wilson.lazyScore(positives, total)`
 
-Quickly and accurately returns the lower bound of the WCI for a confidence of .95. This will be a sufficient scoring mechanism for most cases that want something better than score = u/n.
+Quickly and accurately returns the lower bound of the WCI for a confidence of .95. This will be a sufficient scoring mechanism for most cases that want something better than score = u/n. No need to create `new Wilson(confidence)` objects.
 
 #### `wilsonInstance = new Wilson(confidence)`
 
-Create a new `Wilson`. Cache is shared between instances, since the coefficients don't change.
-Unlike the global object, this comes with amore advanced method.
+Create a new `Wilson`. Cache shared between instances, since the particular Maclaurin coefficients are independent of the confidence. This comes with a more advanced method.
 
 #### `wilsonInstance.score(positives, total, optionalCallback(WCI, rawRatio))`
 
@@ -54,13 +55,14 @@ var spamDetector = new Wilson(.95);
 var postIsSpam = spamDetector.score(myPost.markedSpamNumber, myPost.totalViews, function(wci, rawRatio){
   var length = wci[1] - wci[0]
   var isSpam = !! ourSuperSecretAlgorithmThatDoesntExistYet(length, rawRatio)
-  return isSpam
+  return isSpam;
 })
+myPost.markSpam(postIsSpam) // update the DB
 ```
 
 #### `wilsonInstance.reset(newConfidence)`
 
-You can change the confidence level of any instance by calling `.reset(newConfidence)`. This will reset the cached values for some constants used in the WCI, but it will not reset the primary coefficient cache, which is where the bulk of the computation already happened.
+Change the confidence level of any instance by calling `.reset(newConfidence)`. This will reset only one cached value, but it will not reset the entire Maclaurin coefficient cache (as it is independent of confidence).
 
 
 
