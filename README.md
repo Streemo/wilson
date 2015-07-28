@@ -1,6 +1,6 @@
 # Wilson Confidence Interval, for Meteor.
 
-*WCI is used for decision making and scoring. It works well for many uses (e.g. Scoring Posts, determining if something is spam, or any other kind of binary categorization).*
+*WCI is used for decision making and scoring, ranking posts, spam detection, rate limiting, bot detection, etc. There's a ton of use cases.*
 
 Reddit scoring: http://amix.dk/blog/post/19588
 
