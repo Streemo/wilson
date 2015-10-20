@@ -11,5 +11,5 @@ Package.onUse(function(api) {
   api.addFiles('lib/server/maclaurin.js','server');
   api.addFiles('lib/server/wilson.js','server');
   api.addFiles('lib/server/init.js','server');
-  api.export(['Wilson']);
+  api.export(['Wilson'], 'server');
 });
